@@ -158,8 +158,6 @@ class ActiveKeyDashboard : AppCompatActivity() {
                 Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show()
             }
         }
-
-
         dialogBuilder.show()
     }
 
