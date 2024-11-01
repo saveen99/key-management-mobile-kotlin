@@ -34,6 +34,7 @@ class ActiveKeyDashboard : AppCompatActivity() {
 
         workManager = WorkManager.getInstance(applicationContext)
 
+
         // Check and request SMS permission if necessary
         checkSmsPermission()
 
