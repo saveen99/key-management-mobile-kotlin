@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import android.app.AlertDialog
 
 class HistoryDashboard : AppCompatActivity() {
 
@@ -47,15 +48,30 @@ class HistoryDashboard : AppCompatActivity() {
         // Clear History Button
         val btnClearHistory: Button = findViewById(R.id.btn_clearHistory)
         btnClearHistory.setOnClickListener {
-            if (dbHelper.clearHandoverTable()) {
-                // Success message
-                Toast.makeText(this, "History cleared successfully", Toast.LENGTH_SHORT).show()
-                historyLayout.removeAllViews() // Optional: Clear the layout
-            } else {
-                // Failure message
-                Toast.makeText(this, "Failed to clear history", Toast.LENGTH_SHORT).show()
-            }
+            // Show confirmation dialog
+            AlertDialog.Builder(this)
+                .setTitle("Clear History")
+                .setMessage("Are you sure you want to clear the history?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    // If user confirms, proceed with clearing the database
+                    if (dbHelper.clearHandoverTable()) {
+                        // Success message
+                        Toast.makeText(this, "History cleared successfully", Toast.LENGTH_SHORT).show()
+                        historyLayout.removeAllViews() // Optional: Clear the layout
+                    } else {
+                        // Failure message
+                        Toast.makeText(this, "Failed to clear history", Toast.LENGTH_SHORT).show()
+                    }
+                    dialog.dismiss() // Close the dialog
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    // If user cancels, close the dialog
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
         }
+
 
         ViewCompat.setOnApplyWindowInsetsListener(historyLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

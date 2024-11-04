@@ -139,6 +139,7 @@ class ActiveKeyDashboard : AppCompatActivity() {
                 editTakenTime.text.toString(),
                 handover_time = currentTime  // Set the current time for handover_time
             )
+
             dbHelper.addHandover(handover)
             refreshKeyList()
             dialogBuilder.dismiss()
