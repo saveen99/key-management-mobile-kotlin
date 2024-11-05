@@ -10,6 +10,7 @@
     <td><img src=".readme/4.jpeg" alt="Screenshot 4" width="200"/></td>
     <td><img src=".readme/5.png" alt="Screenshot 5" width="200"/></td>
     <td><img src=".readme/6.jpeg" alt="Screenshot 6" width="200"/></td>
+    <td><img src=".readme/7.png" alt="Screenshot 6" width="200"/></td>
   </tr>
   <tr>
     
