@@ -18,6 +18,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.TextView
 import androidx.work.WorkManager
+import com.google.android.material.button.MaterialButton
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -94,6 +95,7 @@ class ActiveKeyDashboard : AppCompatActivity() {
         val editTakenTime: TextView = popupView.findViewById(R.id.editTakenTime)
         val saveButton: Button = popupView.findViewById(R.id.saveButton)
         val handoverButton: Button = popupView.findViewById(R.id.handoverButton)
+        val deleteButton: Button = popupView.findViewById(R.id.deleteButton)
 
         // Fetch key details from the database
         val user = dbHelper.getUser(keyName)
@@ -106,15 +108,25 @@ class ActiveKeyDashboard : AppCompatActivity() {
 
         // Handle save button click
         saveButton.setOnClickListener {
-            val updatedUser = User(
-                editKeyName.text.toString(),
-                editTakenBy.text.toString(),
-                editPhoneNumber.text.toString(),
-                editTakenTime.text.toString()
-            )
-            dbHelper.updateUser(updatedUser)
-            dialogBuilder.dismiss()
+            val phoneNumber = editPhoneNumber.text.toString()
+
+            // Validate that the phone number contains exactly 10 digits
+            if (phoneNumber.length == 10 && phoneNumber.all { it.isDigit() }) {
+                val updatedUser = User(
+                    editKeyName.text.toString(),
+                    editTakenBy.text.toString(),
+                    phoneNumber,
+                    editTakenTime.text.toString()
+                )
+
+                dbHelper.updateUser(updatedUser)
+                dialogBuilder.dismiss()
+            } else {
+                // Show an error message
+                editPhoneNumber.error = "Please enter a valid 10-digit phone number."
+            }
         }
+
 
         // Handle handover button click
         handoverButton.setOnClickListener {
@@ -159,7 +171,35 @@ class ActiveKeyDashboard : AppCompatActivity() {
                 Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // Handle delete button click
+        deleteButton.setOnClickListener {
+            // Create an AlertDialog for confirmation
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Confirm Deletion")
+            builder.setMessage("Are you sure you want to delete this key?")
+
+            builder.setPositiveButton("Yes") { dialog, which ->
+                // Delete the user from the database
+                if (dbHelper.deleteUser(keyName)) {
+                    Toast.makeText(this, "Key deleted successfully", Toast.LENGTH_SHORT).show()
+                    refreshKeyList() // Refresh the UI to update the list
+                } else {
+                    Toast.makeText(this, "Failed to delete key", Toast.LENGTH_SHORT).show()
+                }
+                dialogBuilder.dismiss() // Dismiss the dialog after the action
+            }
+
+            builder.setNegativeButton("No") { dialog, which ->
+                dialogBuilder.dismiss() // Dismiss the dialog without doing anything
+            }
+
+            // Show the confirmation dialog
+            builder.show()
+
+        }
         dialogBuilder.show()
+
     }
 
     private fun checkSmsPermission() {

@@ -43,23 +43,17 @@ class AddKeyDashboard : AppCompatActivity() {
             val takenBy = findViewById<EditText>(R.id.takenby).text.toString()
             val pNumber = findViewById<EditText>(R.id.number).text.toString()
 
-
-
-            // Validate
-            if (keyName.isEmpty() || keyName.length < 3) {
-                Toast.makeText(this, "Please enter the key name", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (takenBy.isEmpty() || !takenBy.matches(Regex("^[a-zA-Z\\s]+$"))) {
-                Toast.makeText(this, "Please enter the name", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-            if (pNumber.isEmpty() || !pNumber.matches(Regex("^\\d{0,10}$"))) {
-                Toast.makeText(this, "Please enter the phone number", Toast.LENGTH_SHORT).show()
+            // Validate phone number
+            if (pNumber.length != 10 || !pNumber.all { it.isDigit() }) {
+                Toast.makeText(this, "Please enter a valid 10-digit phone number.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-
+            // Validate takenBy name (only letters and spaces)
+            if (!takenBy.all { it.isLetter() || it.isWhitespace() }) {
+                Toast.makeText(this, "Taken by name can only contain letters.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             // Get current time for taken_time
             val currentTime = System.currentTimeMillis().toString()
@@ -68,18 +62,16 @@ class AddKeyDashboard : AppCompatActivity() {
             dbHelper.addKey(User(keyName, takenBy, pNumber, currentTime))
             Toast.makeText(this, "Key added successfully", Toast.LENGTH_SHORT).show()
 
-            if (pNumber.isNotEmpty()) {
-                sendSms(pNumber, "Key has been Taken")
-                startSmsWorker(pNumber)
-            } else {
-                Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show()
-            }
+            // Send SMS if phone number is valid
+            sendSms(pNumber, "Key has been Taken")
+            startSmsWorker(pNumber)
 
             // Clear input fields
             findViewById<EditText>(R.id.keyname).text.clear()
             findViewById<EditText>(R.id.takenby).text.clear()
             findViewById<EditText>(R.id.number).text.clear()
         }
+
 
     }
 

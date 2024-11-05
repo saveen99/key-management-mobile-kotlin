@@ -44,6 +44,7 @@
         android:id="@+id/editPhoneNumber"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:inputType="number"
         android:hint="Enter Phone Number" />
 
     <TextView
@@ -103,7 +104,21 @@
         android:textColor="@color/white"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="20dp"
         app:cornerRadius="15dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/deleteButton"
+        android:backgroundTint="@color/transparent"
+        app:icon="@drawable/baseline_delete_forever_24"
+        app:iconTint="@color/red"
+        app:iconSize="50dp"
+        android:layout_marginTop="10dp"
+        app:cornerRadius="50dp"
+        android:contentDescription="Icon button" />
+
+
 
 </LinearLayout>

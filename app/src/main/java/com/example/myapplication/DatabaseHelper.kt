@@ -235,4 +235,18 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
     }
 
+    // Method to delete a user by key name
+    fun deleteUser(keyName: String): Boolean {
+        val db = this.writableDatabase
+        return try {
+            db.delete(TABLE_USER, "$USER_KEY_NAME = ?", arrayOf(keyName)) > 0 // Returns true if at least one row was deleted
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false // Return false if there was an error
+        }
+    }
+
+
+
+
 }
