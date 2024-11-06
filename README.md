@@ -14,12 +14,9 @@ This mobile application is designed to streamline the management of key handover
 
 ## Technologies Used
 
-- Flutter
-- Firebase
-- SQLite
 - Kotlin
+- SQLite
 - WorkManager
-
 
 
 ## Login Page UI
