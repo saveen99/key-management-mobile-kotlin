@@ -133,7 +133,7 @@ class ActiveKeyDashboard : AppCompatActivity() {
             val phoneNumber = editPhoneNumber.text.toString()
 
             if (phoneNumber.isNotEmpty()) {
-                sendSms(phoneNumber, "Handover completed")
+                sendSms(phoneNumber, "$keyName Successfully Handed Over")
                 workManager.cancelUniqueWork("SmsWorker_$phoneNumber") // Stop periodic SMS
             } else {
                 Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show()
