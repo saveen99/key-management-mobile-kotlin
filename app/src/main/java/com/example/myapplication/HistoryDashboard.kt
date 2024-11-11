@@ -36,13 +36,24 @@ class HistoryDashboard : AppCompatActivity() {
         // Load handover records and create buttons dynamically
         loadHandoverRecords()
 
+        // Export Button with Confirmation Dialog
         btnExport.setOnClickListener {
-            // Export handover records to Excel
-            if (dbHelper.exportHandoverRecordsToExcel()) {
-                Toast.makeText(this, "Exported to Excel successfully", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Failed to export to Excel", Toast.LENGTH_SHORT).show()
-            }
+            AlertDialog.Builder(this)
+                .setTitle("Export Data")
+                .setMessage("Are you sure you want to export the data to Excel?")
+                .setPositiveButton("Yes") { dialog, _ ->
+                    if (dbHelper.exportHandoverRecordsToExcel()) {
+                        Toast.makeText(this, "Exported to Excel successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed to export to Excel", Toast.LENGTH_SHORT).show()
+                    }
+                    dialog.dismiss()
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
         }
 
         // Clear History Button

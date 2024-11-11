@@ -63,7 +63,7 @@ class AddKeyDashboard : AppCompatActivity() {
             Toast.makeText(this, "Key added successfully", Toast.LENGTH_SHORT).show()
 
             // Send SMS if phone number is valid
-            sendSms(pNumber, "Key has been Taken")
+            sendSms(pNumber, "$keyName Key has been Taken")
             startSmsWorker(pNumber)
 
             // Clear input fields

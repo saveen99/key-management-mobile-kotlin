@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
             val password = binding.password.text.toString()
 
             // Check login credentials
-            if (username == "admin" && password == "admin") {
+            if (username == "admin" && password == "admin123") {
 
                 // Correct credentials, save login state in SharedPreferences
                 val editor = sharedPreferences.edit()
