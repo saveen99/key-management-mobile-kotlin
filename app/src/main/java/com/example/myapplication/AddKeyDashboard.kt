@@ -39,15 +39,12 @@ class AddKeyDashboard : AppCompatActivity() {
         // Initialize WorkManager
         workManager = WorkManager.getInstance(applicationContext)
 
-
-
         // Initialize DatabaseHelper
         var dbHelper = DatabaseHelper(this)
 
         // Check and request permission if necessary
         checkSmsPermission()
         checkContactsPermission()
-
 
         // Request Contacts permission
         ActivityCompat.requestPermissions(
@@ -63,11 +60,26 @@ class AddKeyDashboard : AppCompatActivity() {
             startActivityForResult(intent, REQUEST_CONTACT_PICKER)
         }
 
-
         addKeyButton.setOnClickListener {
             val keyName = findViewById<EditText>(R.id.keyname).text.toString()
             val takenBy = findViewById<EditText>(R.id.takenby).text.toString()
             val pNumber = pNumber.text.toString()
+
+            // Check if the fields are empty
+            if (keyName.isEmpty()) {
+                Toast.makeText(this, "Key Name cannot be empty", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (takenBy.isEmpty()) {
+                Toast.makeText(this, "Taken By cannot be empty", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (pNumber.isEmpty()) {
+                Toast.makeText(this, "Phone Number cannot be empty", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             // Validate phone number
             if (pNumber.length != 10 || !pNumber.all { it.isDigit() }) {
@@ -97,8 +109,6 @@ class AddKeyDashboard : AppCompatActivity() {
             findViewById<EditText>(R.id.takenby).text.clear()
             findViewById<EditText>(R.id.number).text.clear()
         }
-
-
     }
 
     private fun startSmsWorker(phoneNumber: String) {
