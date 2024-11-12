@@ -9,6 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.provider.ContactsContract
+import android.widget.ImageButton
 import com.example.myapplication.DatabaseHelper
 import com.example.myapplication.R
 import com.example.myapplication.User // Use your own User class, not Firebase
@@ -19,11 +23,18 @@ import androidx.work.* // Add this import for WorkManager
 class AddKeyDashboard : AppCompatActivity() {
 
     private val SMS_PERMISSION_CODE = 100
+    private val CONTACTS_PERMISSION_CODE = 101
     private lateinit var workManager: WorkManager
+    private val REQUEST_CONTACT_PICKER = 1
+    private lateinit var pNumber: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_key_dashboard)
+
+        val btnQuickAccess: ImageButton = findViewById(R.id.btn_quick_access)
+        val addKeyButton = findViewById<Button>(R.id.add)
+        pNumber = findViewById(R.id.number)
 
         // Initialize WorkManager
         workManager = WorkManager.getInstance(applicationContext)
@@ -33,19 +44,34 @@ class AddKeyDashboard : AppCompatActivity() {
         // Initialize DatabaseHelper
         var dbHelper = DatabaseHelper(this)
 
-        val addKeyButton = findViewById<Button>(R.id.add)
-
-        // Check and request SMS permission if necessary
+        // Check and request permission if necessary
         checkSmsPermission()
+        checkContactsPermission()
+
+
+        // Request Contacts permission
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(android.Manifest.permission.READ_CONTACTS),
+            REQUEST_CONTACT_PICKER
+        )
+
+        // Open contacts when button is clicked
+        btnQuickAccess.setOnClickListener {
+            checkContactsPermission() // Ensure permission is checked before opening contacts
+            val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+            startActivityForResult(intent, REQUEST_CONTACT_PICKER)
+        }
+
 
         addKeyButton.setOnClickListener {
             val keyName = findViewById<EditText>(R.id.keyname).text.toString()
             val takenBy = findViewById<EditText>(R.id.takenby).text.toString()
-            val pNumber = findViewById<EditText>(R.id.number).text.toString()
+            val pNumber = pNumber.text.toString()
 
             // Validate phone number
             if (pNumber.length != 10 || !pNumber.all { it.isDigit() }) {
-                Toast.makeText(this, "Please enter a valid 10-digit phone number.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter a valid phone number starting with 0.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -102,6 +128,13 @@ class AddKeyDashboard : AppCompatActivity() {
         }
     }
 
+    private fun checkContactsPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS)
+            != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_CONTACTS), CONTACTS_PERMISSION_CODE)
+        }
+    }
+
     private fun sendSms(phoneNumber: String, message: String) {
         try {
             val smsManager = SmsManager.getDefault()
@@ -115,17 +148,46 @@ class AddKeyDashboard : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == SMS_PERMISSION_CODE) {
-            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                // Permission granted
-            } else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+        when (requestCode) {
+            SMS_PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "SMS Permission Granted", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "SMS Permission Denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+            CONTACTS_PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Contacts Permission Granted", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Contacts Permission Denied", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CONTACT_PICKER && resultCode == Activity.RESULT_OK) {
+            data?.data?.let { contactUri ->
+                val cursor = contentResolver.query(
+                    contactUri,
+                    arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+                    null,
+                    null,
+                    null
+                )
+                cursor?.use {
+                    if (it.moveToFirst()) {
+                        val phoneNumber = it.getString(0)
+                        pNumber.setText(phoneNumber)
+                    }
+                }
+            }
+        }
+    }
 
 
 }
