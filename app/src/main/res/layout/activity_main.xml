@@ -48,7 +48,7 @@
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="63dp"
                 android:id="@+id/username"
                 android:background="@drawable/custom_edittext"
                 android:layout_marginTop="40dp"
@@ -62,7 +62,7 @@
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="63dp"
                 android:id="@+id/password"
                 android:background="@drawable/custom_edittext"
                 android:layout_marginTop="20dp"
@@ -77,7 +77,7 @@
             
             <Button
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
+                android:layout_height="68dp"
                 android:text="Login"
                 android:id="@+id/loginButton"
                 android:textSize="18sp"

@@ -15,7 +15,7 @@ import android.provider.ContactsContract
 import android.widget.ImageButton
 import com.example.myapplication.DatabaseHelper
 import com.example.myapplication.R
-import com.example.myapplication.User // Use your own User class, not Firebase
+import com.example.myapplication.User
 import androidx.work.* // Add this import for WorkManager
 
 
