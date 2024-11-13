@@ -82,8 +82,12 @@ class AddKeyDashboard : AppCompatActivity() {
             }
 
             // Validate phone number
-            if (pNumber.length != 10 || !pNumber.all { it.isDigit() }) {
-                Toast.makeText(this, "Please enter a valid phone number starting with 0.", Toast.LENGTH_SHORT).show()
+            if (!(pNumber.startsWith("0") || pNumber.startsWith("+94")) ||
+                (pNumber.startsWith("0") && pNumber.length != 10) ||
+                (pNumber.startsWith("+94") && pNumber.length != 12) ||
+                !pNumber.removePrefix("+94").all { it.isDigit() }) {
+
+                Toast.makeText(this, "Please enter a valid phone number starting with 0 or +94.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
